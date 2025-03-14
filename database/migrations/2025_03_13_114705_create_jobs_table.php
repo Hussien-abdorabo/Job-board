@@ -14,13 +14,15 @@ return new class extends Migration
     {
         Schema::create('jobs', function (Blueprint $table) {
             $table->id();
-
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('title');
             $table->text('description');
             $table->string('location');
             $table->enum('category',Job::$categories);
             $table->unsignedInteger('salary');
             $table->enum('experience', Job::$experiences);
+            $table->enum('type',Job::$type);
+            $table->date('application_deadline');
 
             $table->timestamps();
         });
