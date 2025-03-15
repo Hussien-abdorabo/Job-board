@@ -7,8 +7,7 @@ use Illuminate\Http\Request;
 use App\models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Testing\Fluent\Concerns\Has;
-use function MongoDB\Driver\Monitoring\removeSubscriber;
+
 
 class AuthController extends Controller
 {
@@ -20,7 +19,7 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
             'password_confirmation' => 'required|string|min:6|same:password',
-            'type' => 'required|string|in:employee,job_seeker'
+            'type' => 'required|string|in:employer,job_seeker'
         ]);
 
         if( $validated->fails()){
@@ -68,6 +67,14 @@ class AuthController extends Controller
             'user' => $user,
             'token' => $token
         ],200);
+    }
+
+    public function logout(Request $request){
+            $request->user()->token()->delete();
+
+        return response()->json([
+            'message' => 'User successfully logged out'
+        ]);
     }
 }
 
