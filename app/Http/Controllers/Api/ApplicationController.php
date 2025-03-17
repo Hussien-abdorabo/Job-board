@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Events\ApplicationStatusUpdated;
 use App\Http\Controllers\Controller;
+use App\Jobs\UpdateApplicationStatusJob;
 use App\Models\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -96,20 +97,7 @@ class ApplicationController extends Controller
                 'errors' => $validator->errors()->all(),
             ]);
         }
-        $old_status = $application->status;
-        $application->update([
-            'status' => $request->status,
-        ]);
-        Log::info("Application Status Updated",[
-            'job_id' => $job->id,
-            'user_id' => $job->user_id,
-            'application_id'=> $application->id,
-            'old_status' => $old_status,
-            'status' => $request->status,
-        ]);
-        Log::info('Firing ApplicationStatusUpdated event', ['application_id' => $application->id]);
-        event(new ApplicationStatusUpdated($application));
-
+        UpdateApplicationStatusJob::dispatch($application->id,$request->status);
         return response()->json([
             'message' => 'Application Status Updated successfully',
             'status' => $application->status,
