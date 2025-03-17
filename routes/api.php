@@ -19,6 +19,8 @@ Route::prefix('jobs')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::Post('create', [JobController::class, 'store']);
         Route::post('{job}/apply', [ApplicationController::class, 'store']);
+        Route::get('{application}/status',[ApplicationController::class, 'show']);
+        Route::patch('{application}/update/status',[ApplicationController::class, 'update']);
     });
 });
 
