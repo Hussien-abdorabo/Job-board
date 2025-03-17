@@ -22,7 +22,7 @@ class Application extends Model
         'status'=> 'string'
     ];
 
-
+    public static array $statuses = ['applied','rejected','under_review','accepted'];
     public function user(){
         return $this->belongsTo(User::class,'user_id');
     }
