@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Events\ApplicationStatusUpdate;
+use App\Events\ApplicationStatusUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\Application;
 use Illuminate\Http\Request;
@@ -79,6 +79,7 @@ class ApplicationController extends Controller
      */
     public function update(Request $request, Application $application)
     {
+        Log::info("start update status",["application_id"=>$application->id]);
         $user = auth()->user();
         $job = $application->job;
         if (!$user || $user->role !=='employer') {
@@ -106,7 +107,8 @@ class ApplicationController extends Controller
             'old_status' => $old_status,
             'status' => $request->status,
         ]);
-        event(new ApplicationStatusUpdate($application));
+        Log::info('Firing ApplicationStatusUpdated event', ['application_id' => $application->id]);
+        event(new ApplicationStatusUpdated($application));
 
         return response()->json([
             'message' => 'Application Status Updated successfully',
