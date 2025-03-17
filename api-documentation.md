@@ -70,3 +70,28 @@
   {
     "error": "Invalid credentials"
   }
+
+
+## 3. List All Jobs
+- **Endpoint**: `GET /jobs`
+- **Description**: Retrieve a list of all job postings (publicly accessible).
+- **Request Body**: None
+- **Success Response** (200):
+  ```json
+  {
+      "message": "Jobs retrieved successfully",
+      "data": [
+          {
+              "id": 1,
+              "user_id": 2,
+              "title": "Software Engineer",
+              "description": "Develop and maintain web applications.",
+              "location": "Remote",
+              "salary": 60000,
+              "type": "full_time",
+              "application_deadline": "2025-12-31",
+              "created_at": "2025-03-15T10:00:00.000000Z",
+              "updated_at": "2025-03-15T10:00:00.000000Z"
+          }
+      ]
+  }
