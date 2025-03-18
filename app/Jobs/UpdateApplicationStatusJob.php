@@ -29,12 +29,12 @@ class UpdateApplicationStatusJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle(): voidF
     {
         $application =Application::findorfail($this->applicationID);
         $old_status = $application->status;
         $application->update([
-            'status' => $application->status,
+            'status' => status,
         ]);
         Log::info("Application Status Updated",[
             'job_id' => $application->id,

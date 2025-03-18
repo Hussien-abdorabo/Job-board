@@ -100,7 +100,7 @@ class ApplicationController extends Controller
         UpdateApplicationStatusJob::dispatch($application->id,$request->status);
         return response()->json([
             'message' => 'Application Status Updated successfully',
-            'status' => $application->status,
+            'status' => $request->status,
         ]);
     }
 

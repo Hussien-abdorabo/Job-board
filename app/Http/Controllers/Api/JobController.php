@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Job;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Validation\Rule;
@@ -16,7 +17,9 @@ class JobController extends Controller
      */
     public function index()
     {
-        $jobs = Job::all();
+        $jobs = Cache::remember('jobs_all',3600,function (){
+            return Job::with('user')->get()->toArray();
+        });
         return response()->json([
             'message' => 'Jobs retrieved successfully.',
             'data' => $jobs
@@ -60,6 +63,7 @@ class JobController extends Controller
             'category'=>$request->category,
             'application_deadline'=>$request->application_deadline,
         ]);
+        Cache::forget('jobs_all');
         return response()->json([
             'message' => 'Job created successfully',
             'job' => $job,
