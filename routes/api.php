@@ -16,7 +16,7 @@ Route::prefix('auth')->group(function () {
 });
 Route::prefix('jobs')->group(function () {
         Route::get('list',[JobController::class, 'index']);
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware(['auth:sanctum','throttle:60,1'])->group(function () {
         Route::Post('create', [JobController::class, 'store']);
         Route::post('{job}/apply', [ApplicationController::class, 'store']);
         Route::get('{application}/status',[ApplicationController::class, 'show']);
