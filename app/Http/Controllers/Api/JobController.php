@@ -15,10 +15,29 @@ class JobController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $jobs = Cache::remember('jobs_all',3600,function (){
-            return Job::with('user')->get()->toArray();
+        $CacheKey = 'job_all'. md5($request->fullUrl());
+        $jobs = Cache::remember($CacheKey,3600,function () use($request){
+            $query = Job::with('user');
+
+            if ($request->has('location')) {
+                $query->where('location', 'like', '%' . $request->input('location') . '%');
+            }
+
+            // Filter by salary range
+            if ($request->has('min_salary')) {
+                $query->where('salary', '>=', $request->input('min_salary'));
+            }
+            if ($request->has('max_salary')) {
+                $query->where('salary', '<=', $request->input('max_salary'));
+            }
+
+            // Filter by job type
+            if ($request->has('type')) {
+                $query->where('type', $request->input('type'));
+            }
+            return $query->get()->toArray();
         });
         return response()->json([
             'message' => 'Jobs retrieved successfully.',
