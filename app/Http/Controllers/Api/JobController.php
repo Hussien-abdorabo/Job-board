@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendJobAlert;
 use App\Models\Job;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -83,6 +84,7 @@ class JobController extends Controller
             'application_deadline'=>$request->application_deadline,
         ]);
         Cache::forget('jobs_all');
+        SendJobAlert::dispatch($job);
         return response()->json([
             'message' => 'Job created successfully',
             'job' => $job,

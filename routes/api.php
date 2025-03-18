@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\JobAlertController;
 use App\Http\Controllers\Api\JobController;
+use App\Models\JobAlert;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\API\ApplicationController;
@@ -21,6 +23,7 @@ Route::prefix('jobs')->group(function () {
         Route::post('{job}/apply', [ApplicationController::class, 'store']);
         Route::get('{application}/status',[ApplicationController::class, 'show']);
         Route::patch('{application}/update/status',[ApplicationController::class, 'update']);
+        Route::post('job-alert',[JobAlertController::class, 'subscribeToAlerts']);
     });
 });
 
