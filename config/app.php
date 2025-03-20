@@ -54,6 +54,11 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+//    'providers' => [
+//
+////        Illuminate\Broadcasting\BroadcastServiceProvider::class,
+//    ],
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
@@ -122,5 +127,6 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+
 
 ];
