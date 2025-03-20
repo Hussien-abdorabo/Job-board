@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\ApplicationController;
+use App\Http\Controllers\Api\InterviewController;
 use App\Http\Controllers\Api\JobAlertController;
 use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\MessageController;
@@ -33,6 +34,12 @@ Route::prefix('messages')->group(function () {
        Route::post('send/message',[MessageController::class,'sendMessage']);
        Route::get('get/messages/history/{application}',[MessageController::class,'getMessages']);
    }) ;
+});
+
+Route::prefix('interviews')->group(function () {
+    Route::middleware(['auth:sanctum','throttle:60,1'])->group(function () {
+        Route::post('interview/sent',[InterviewController::class,'store']);
+    });
 });
 
 
