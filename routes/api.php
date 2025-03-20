@@ -1,11 +1,11 @@
 <?php
 
+use App\Http\Controllers\API\ApplicationController;
 use App\Http\Controllers\Api\JobAlertController;
 use App\Http\Controllers\Api\JobController;
-use App\Models\JobAlert;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\API\ApplicationController;
+use Illuminate\Support\Facades\Route;
 
 
 Route::prefix('auth')->group(function () {
@@ -16,6 +16,7 @@ Route::prefix('auth')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
     });
 });
+
 Route::prefix('jobs')->group(function () {
         Route::get('list',[JobController::class, 'index']);
     Route::middleware(['auth:sanctum','throttle:60,1'])->group(function () {
@@ -26,4 +27,13 @@ Route::prefix('jobs')->group(function () {
         Route::post('job-alert',[JobAlertController::class, 'subscribeToAlerts']);
     });
 });
+
+Route::prefix('messages')->group(function () {
+   Route::middleware(['auth:sanctum','throttle:60,1'])->group(function () {
+       Route::post('send/message',[MessageController::class,'sendMessage']);
+       Route::get('get/messages/history/{application}',[MessageController::class,'getMessages']);
+   }) ;
+});
+
+
 
