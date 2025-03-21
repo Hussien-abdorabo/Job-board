@@ -112,8 +112,15 @@ class JobController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Job $job)
     {
-        //
+        $user = auth()->user();
+        if(!$user || $user->id !== $job->user_id){
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $Job = Job::where('id',$job->id)->first();
+        $Job->delete();
+        Cache::forget('jobs_all');
+        return response()->json(['message' => 'Job deleted successfully'],200);
     }
 }
