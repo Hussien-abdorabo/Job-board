@@ -21,10 +21,14 @@ Route::prefix('auth')->group(function () {
 Route::prefix('jobs')->group(function () {
         Route::get('list',[JobController::class, 'index']);
     Route::middleware(['auth:sanctum','throttle:60,1'])->group(function () {
+        // jobs routes
         Route::Post('create', [JobController::class, 'store']);
+        Route::delete('delete/{job}', [JobController::class, 'destroy']);
+        // application routes
         Route::post('{job}/apply', [ApplicationController::class, 'store']);
         Route::get('{application}/status',[ApplicationController::class, 'show']);
         Route::patch('{application}/update/status',[ApplicationController::class, 'update']);
+        Route::delete('{application}/delete', [ApplicationController::class, 'destroy']);
         Route::post('job-alert',[JobAlertController::class, 'subscribeToAlerts']);
     });
 });
@@ -39,6 +43,7 @@ Route::prefix('messages')->group(function () {
 Route::prefix('interviews')->group(function () {
     Route::middleware(['auth:sanctum','throttle:60,1'])->group(function () {
         Route::post('interview/sent',[InterviewController::class,'store']);
+        Route::patch('interview/status/update/{interview}',[InterviewController::class,'update']);
     });
 });
 
