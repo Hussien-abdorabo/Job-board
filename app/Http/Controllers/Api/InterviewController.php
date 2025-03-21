@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api; // Adjust namespace based on error log
 use App\Models\Application;
 use App\Models\Interview;
 use App\Notifications\InterviewStatusUpdated;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -86,5 +87,21 @@ class InterviewController
             $interview->jobSeeker->notify(new InterviewStatusUpdated($status));
         }
         return response()->json(['message' => 'Interview status changed', 'data' => $status], 201);
+    }
+
+    public function index(Request $request)
+    {
+        $user=auth()->user();
+        if(!$user){
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $query = Interview::where('employer_id',$user->id)
+            ->orWhere('job_seeker_id',$user->id)
+            ->with('employer','jobSeeker','application.job');
+        if($request->has('status')){
+            $query->where('status', $request->status);
+        }
+        $interviews = $query->get();
+        return response()->json(['interview' => $interviews], 201);
     }
 }

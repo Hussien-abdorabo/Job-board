@@ -44,6 +44,7 @@ Route::prefix('interviews')->group(function () {
     Route::middleware(['auth:sanctum','throttle:60,1'])->group(function () {
         Route::post('interview/sent',[InterviewController::class,'store']);
         Route::patch('interview/status/update/{interview}',[InterviewController::class,'update']);
+        Route::get('interview',[InterviewController::class,'index']);
     });
 });
 
