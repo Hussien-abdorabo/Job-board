@@ -6,6 +6,7 @@ use App\Events\ApplicationStatusUpdated;
 use App\Http\Controllers\Controller;
 use App\Jobs\UpdateApplicationStatusJob;
 use App\Models\Application;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
@@ -49,8 +50,10 @@ class ApplicationController extends Controller
             'resume_path'=>$resume_path,
             'cover_letter'=>$request->cover_letter,
         ]);
+
         return response()->json([
             'message' => 'Application Submitted successfully',
+            'application'=>$application,
         ],201);
     }
 
@@ -65,10 +68,13 @@ class ApplicationController extends Controller
             return response()->json(['error' => 'only job_seeker can show their application status'], 401);
         }
         if ($user->id !== $application->user_id){
+        $application = Application::where('id',$application->id)->first();
+        if(!$application){
+            return response()->json(['error' => 'Application not found'], 404);
+        }
             return response()->json(['error' => 'you are not the owner of this applicaton'], 401);
         }
 
-        $application = Application::where('id',$application->id)->first();
         return response()->json([
             'job' => $application->job,
             'application_status' => $application->status,
@@ -107,8 +113,19 @@ class ApplicationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Application $application)
     {
-
+        $user = auth()->user();
+        if(!$user || $user->id !== $application->user_id){
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $CanceledApplication = Application::where('id',$application->id)->first();
+        if(!$CanceledApplication){
+            return response()->json(['error' => 'Application not found'], 404);
+        }
+        $CanceledApplication->delete();
+        return response()->json([
+            'message' => 'Application canceled successfully',
+        ]);
     }
 }
