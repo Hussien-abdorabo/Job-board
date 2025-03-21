@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('employer_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('job_seeker_id')->constrained('users')->cascadeOnDelete();
             $table->dateTime('scheduled_at');
-            $table->enum('status',['pending','accepted','rejected'])->default('pending');
+            $table->enum('status',['pending','accepted','rejected,canceled'])->default('pending');
             $table->text('text')->nullable();
             $table->boolean('reminder_sent')->default(false);
             $table->timestamps();
