@@ -37,6 +37,23 @@ class ApplicationController extends Controller
         ],200);
     }
 
+public function jobSeekerApplication(Request $request)
+{
+    $user = auth()->user();
+    if(!$user){
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
+    if($user->role !=='job_seeker'){
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
+    $applications =Application::where('user_id',$user->id)
+    ->with(['job','job.user'])
+    ->get();
+    return response()->json([
+        'applications' => $applications
+    ],200);
+}
+
     /**
      * Store a newly created resource in storage.
      */
