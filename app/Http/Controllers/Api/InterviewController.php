@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api; // Adjust namespace based on error log
 use App\Models\Application;
 use App\Models\Interview;
 use App\Notifications\InterviewStatusUpdated;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -104,4 +103,21 @@ class InterviewController
         $interviews = $query->get();
         return response()->json(['interview' => $interviews], 201);
     }
+
+    public function show( Interview $interview)
+    {
+        $user=auth()->user();
+        if(!$user){
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        if($user->id !== $interview->employer_id && $user->id !== $interview->job_seeker_id){
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+
+        $interview->load(['employer','jobSeeker','application.job']);
+        return response()->json(['InterviewDetails' => $interview], 201);
+    }
 }
+
+
