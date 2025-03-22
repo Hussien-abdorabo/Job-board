@@ -28,6 +28,7 @@ Route::prefix('jobs')->group(function () {
         Route::post('{job}/apply', [ApplicationController::class, 'store']);
         Route::get('{application}/status',[ApplicationController::class, 'show']);
         Route::patch('{application}/update/status',[ApplicationController::class, 'update']);
+        Route::get('applications/list', [ApplicationController::class, 'index']);
         Route::delete('{application}/delete', [ApplicationController::class, 'destroy']);
         Route::post('job-alert',[JobAlertController::class, 'subscribeToAlerts']);
     });

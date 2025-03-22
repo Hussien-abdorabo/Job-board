@@ -19,9 +19,22 @@ class ApplicationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-
+        $user = auth()->user();
+        if(!$user){
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        if($user->role !=='employer'){
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $jobId = Job::where('user_id',$user->id)->pluck('id');
+        $applications = Application::whereIn('job_id',$jobId)
+            ->with(['job','user'])
+            ->paginate(10);
+        return response()->json([
+            'applications' => $applications
+        ],200);
     }
 
     /**
