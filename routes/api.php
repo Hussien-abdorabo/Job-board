@@ -46,6 +46,7 @@ Route::prefix('interviews')->group(function () {
         Route::patch('interview/status/update/{interview}',[InterviewController::class,'update']);
         Route::get('interview',[InterviewController::class,'index']);
         Route::get('interview/details/{interview}',[InterviewController::class,'show']);
+        Route::post('interview/feedback/{interview}',[InterviewController::class,'submitFeedback']);
     });
 });
 

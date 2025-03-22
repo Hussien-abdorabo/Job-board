@@ -34,5 +34,9 @@ class Interview extends Model
     public function application(){
         return $this->belongsTo(Application::class);
     }
+    public function feedback()
+    {
+        return $this->hasMany(InterviewFeedback::class);
+    }
 
 }

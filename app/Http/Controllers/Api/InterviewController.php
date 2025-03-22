@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api; // Adjust namespace based on error log
 
 use App\Models\Application;
 use App\Models\Interview;
+use App\Models\InterviewFeedback;
 use App\Notifications\InterviewStatusUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -118,6 +119,38 @@ class InterviewController
         $interview->load(['employer','jobSeeker','application.job']);
         return response()->json(['InterviewDetails' => $interview], 201);
     }
+
+    public function submitFeedback(Request $request, Interview $interview)
+    {
+        $validator = Validator::make($request->all(), [
+            'feedback' => 'required|string|max:500',
+            'rating' => 'required|numeric|between:1,5',
+        ]);
+        if ($validator->fails()) {
+            return  response()->json(['error' => $validator->errors()], 422);
+        }
+        $user=auth()->user();
+        if(!$user){
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        if($user->id !== $interview->employer_id){
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+//        if($interview->feedback){
+//            return response()->json(['error' => "Feedback already submitted for this interview"], 400);
+//        }
+        $interviewFeedback = InterviewFeedback::create([
+            'interview_id'=>$interview->id,
+            'employer_id'=>$user->id,
+            'feedback' => $request->feedback,
+            'rating' => $request->rating,
+        ]);
+        $interviewFeedback->save();
+        return response()->json(['message' => 'Feedback submitted', 'data' => $interviewFeedback], 201);
+    }
 }
+
+
 
 
