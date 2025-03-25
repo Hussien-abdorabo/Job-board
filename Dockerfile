@@ -26,8 +26,10 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN composer install --no-dev --optimize-autoloader
 
 # Expose port 8000
-EXPOSE 8000
+EXPOSE ${PORT:-8000}
+
 
 # Start Laravel
-CMD php -S 127.0.0.1:8000 -t public
+CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+
 
