@@ -28,7 +28,6 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 COPY ./nginx.conf /etc/nginx/sites-available/default
 
 # Expose port 80
-EXPOSE 80
-
+EXPOSE $PORT
 # Start Nginx and PHP-FPM
 CMD service nginx start && php-fpm
