@@ -1,4 +1,4 @@
-# Use the official PHP 8.4 image
+# Use the official PHP 8.4 image with FPM
 FROM php:8.4-fpm
 
 # Install system dependencies
@@ -6,7 +6,8 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     git \
     unzip \
-    && docker-php-ext-install pdo pdo_pgsql
+    nginx \
+    && docker-php-ext-install pdo pdo_mysql
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -23,8 +24,11 @@ RUN composer install --optimize-autoloader --no-dev
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose port 8000
-EXPOSE 8000
+# Configure Nginx
+COPY ./nginx.conf /etc/nginx/sites-available/default
 
-# Start PHP-FPM
-CMD ["php-fpm"]
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx and PHP-FPM
+CMD service nginx start && php-fpm
