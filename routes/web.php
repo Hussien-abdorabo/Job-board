@@ -12,4 +12,8 @@ Route::get('/migrate', function () {
     return 'Database migrated successfully!';
 });
 
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok']);
+});
+
 
