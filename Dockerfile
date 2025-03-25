@@ -27,7 +27,8 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Configure Nginx
 COPY ./nginx.conf /etc/nginx/sites-available/default
 
-# Expose port 80
+# Expose the port defined by Railway
 EXPOSE $PORT
+
 # Start Nginx and PHP-FPM
 CMD service nginx start && php-fpm
