@@ -7,8 +7,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-//Route::get('/debug-swagger-config', function () {
-//    dd(config('l5-swagger.defaults.paths'));
-//});
+Route::get('/migrate', function () {
+    \Artisan::call('migrate', ['--force' => true]);
+    return 'Database migrated successfully!';
+});
 
 
