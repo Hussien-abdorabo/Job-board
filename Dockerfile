@@ -1,34 +1,33 @@
-# Use the official PHP 8.4 image with FPM
-FROM php:8.4-fpm
+# Use the official PHP image
+FROM php:8.2-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    libpq-dev \
-    git \
     unzip \
-    nginx \
-    && docker-php-ext-install pdo pdo_mysql
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    libzip-dev
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath zip
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /var/www
 
 # Copy project files
 COPY . .
 
-# Install PHP dependencies
-RUN composer install --optimize-autoloader --no-dev
+# Install Composer dependencies
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Expose port 8000
+EXPOSE 8000
 
-# Configure Nginx
-COPY ./nginx.conf /etc/nginx/sites-available/default
+# Start Laravel
+CMD php -S 127.0.0.1:8000 -t public
 
-# Expose the port defined by Railway
-EXPOSE $PORT
-
-# Start Nginx and PHP-FPM
-CMD service nginx start && php-fpm
