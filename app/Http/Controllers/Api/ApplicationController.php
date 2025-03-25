@@ -6,7 +6,6 @@ use App\Events\ApplicationStatusUpdated;
 use App\Http\Controllers\Controller;
 use App\Jobs\UpdateApplicationStatusJob;
 use App\Models\Application;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
@@ -37,8 +36,8 @@ class ApplicationController extends Controller
         ],200);
     }
 
-public function jobSeekerApplication(Request $request)
-{
+    public function jobSeekerApplication(Request $request)
+    {
     $user = auth()->user();
     if(!$user){
         return response()->json(['error' => 'Unauthorized'], 401);
@@ -52,7 +51,7 @@ public function jobSeekerApplication(Request $request)
     return response()->json([
         'applications' => $applications
     ],200);
-}
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -111,8 +110,65 @@ public function jobSeekerApplication(Request $request)
         ],201);
     }
 
+
     /**
-     * Update the specified resource in storage.
+     * @OA\Patch(
+     *     path="/api",
+     *     operationId="updateApplicationStatus",
+     *     tags={"Applications"},
+     *     summary="Update application status",
+     *     description="Allows an employer to update the status of a job application.",
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="application",
+     *         in="path",
+     *         description="ID of the application",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="accepted", enum={"pending", "under_review", "accepted", "rejected"})
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Application status updated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Application status updated"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="user_id", type="integer", example=2),
+     *                 @OA\Property(property="job_id", type="integer", example=1),
+     *                 @OA\Property(property="status", type="string", example="accepted")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Unauthenticated")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Unauthorized")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="object", example={"status": ["The status field must be one of pending, under_review, accepted, rejected."]})
+     *         )
+     *     )
+     * )
      */
     public function update(Request $request, Application $application)
     {

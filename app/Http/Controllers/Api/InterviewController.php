@@ -137,9 +137,9 @@ class InterviewController
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-//        if($interview->feedback){
-//            return response()->json(['error' => "Feedback already submitted for this interview"], 400);
-//        }
+        if($interview->feedback){
+            return response()->json(['error' => "Feedback already submitted for this interview"], 400);
+        }
         $interviewFeedback = InterviewFeedback::create([
             'interview_id'=>$interview->id,
             'employer_id'=>$user->id,

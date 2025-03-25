@@ -24,6 +24,7 @@ Route::prefix('jobs')->group(function () {
         // jobs routes
         Route::Post('create', [JobController::class, 'store']);
         Route::delete('delete/{job}', [JobController::class, 'destroy']);
+        Route::put('update/{job}', [JobController::class, 'update']);
         // application routes
         Route::post('{job}/apply', [ApplicationController::class, 'store']);
         Route::get('{application}/status',[ApplicationController::class, 'show']);
