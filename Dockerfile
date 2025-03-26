@@ -1,35 +1,34 @@
-# Use the official PHP image
+# Use the official PHP image as base
 FROM php:8.2-fpm
 
-# Install system dependencies
+# Set the working directory
+WORKDIR /var/www
+
+# Install dependencies
 RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    zip \
     unzip \
     git \
     curl \
-    libpng-dev \
     libonig-dev \
     libxml2-dev \
-    zip \
-    libzip-dev
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath zip
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
-WORKDIR /var/www
-
-# Copy project files
+# Copy the application code
 COPY . .
 
-# Install Composer dependencies
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Expose port 8000
-EXPOSE ${PORT:-8000}
+# Set permissions
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
+# Expose port 9000 for PHP-FPM
+EXPOSE 9000
 
-# Start Laravel
-CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
-
-
+# Start PHP-FPM server
+CMD ["php-fpm"]
